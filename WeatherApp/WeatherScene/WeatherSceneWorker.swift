@@ -11,7 +11,49 @@
 //
 
 import UIKit
+import Alamofire
+
+protocol WeatherSceneWorkerDelegate: class {
+    func resultsForWeatherSucess(_ weatherScreenModel: WeatherScreenModel)
+}
 
 class WeatherSceneWorker
 {
-}
+    let weatherSceneModel = WeatherScreenModel()
+    weak var delegate: WeatherSceneWorkerDelegate?
+    func downloadCurrentWeather() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        let currentDate = dateFormatter.string(from: Date())
+        weatherSceneModel.currentDate = "Today, \(currentDate)"
+        let currentWeatherURL = URL(string: WEATHER_URL)
+        Alamofire.request(currentWeatherURL!).responseJSON(completionHandler: {(response) in
+            let JSONObject = response.result
+            if let dict = JSONObject.value as? Dictionary<String, AnyObject>
+            {
+                if let name = dict["name"] as? String
+                {
+                    self.weatherSceneModel.cityName = name
+                }
+                if let weather = dict["weather"] as? [Dictionary<String, AnyObject>]
+                {
+                    if let main = weather[0]["main"] as? String
+                    {
+                        self.weatherSceneModel.weatherType = main
+                    }
+                }
+                if let main = dict["main"] as? Dictionary<String, AnyObject>
+                {
+                    if let currentTemparature = main["temp"] as? Double
+                    {
+                        let tempConversion = (currentTemparature * (9/5) - 459.67)
+                        let farenheit = Double(round(10 * tempConversion/10))
+                        self.weatherSceneModel.currentTemp = farenheit
+                        self.delegate?.resultsForWeatherSucess(self.weatherSceneModel)
+                    }
+                }
+            }
+        })
+        }
+    }

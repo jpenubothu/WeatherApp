@@ -11,8 +11,19 @@
 //
 
 import UIKit
+import Foundation
 
-enum WeatherScene
+class WeatherScreenModel
 {
+    var cityName: String!
+    var weatherType: String!
+    var currentTemp: Double!
+    var currentDate: String! 
+}
 
+class WSResponseModel
+{
+    var jsonResponse: Any?
+    var error: Error?
+    var isSuccess: Bool!
 }

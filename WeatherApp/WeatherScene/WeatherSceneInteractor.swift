@@ -14,15 +14,28 @@ import UIKit
 
 protocol WeatherSceneBusinessLogic
 {
+    func getCurrentWeather()
 }
 
 protocol WeatherSceneDataStore
 {
 }
 
-class WeatherSceneInteractor: WeatherSceneBusinessLogic, WeatherSceneDataStore
+class WeatherSceneInteractor: WeatherSceneBusinessLogic, WeatherSceneDataStore, WeatherSceneWorkerDelegate
 {
-  var presenter: WeatherScenePresentationLogic?
-  var worker: WeatherSceneWorker?
-
+    var presenter: WeatherScenePresentationLogic?
+    var worker: WeatherSceneWorker?
+    
+    init() {
+        worker = WeatherSceneWorker()
+        worker?.delegate = self
+    }
+    
+    func getCurrentWeather() {
+        worker?.downloadCurrentWeather()
+    }
+    
+    func resultsForWeatherSucess(_ weatherScreenModel: WeatherScreenModel) {
+        presenter?.presentTemparatureValues(weatherScreenModel)
+    }
 }

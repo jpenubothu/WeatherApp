@@ -14,16 +14,24 @@ import UIKit
 
 protocol WeatherSceneDisplayLogic: class
 {
+    func displayTemparature(_ weatherScreenModel: WeatherScreenModel)
     
 }
 
-class WeatherSceneViewController: UIViewController, WeatherSceneDisplayLogic
+class WeatherSceneViewController: UIViewController, WeatherSceneDisplayLogic, UITableViewDelegate, UITableViewDataSource
 {
     var interactor: WeatherSceneBusinessLogic?
     var router: (NSObjectProtocol & WeatherSceneRoutingLogic & WeatherSceneDataPassing)?
     
-    // MARK: Object lifecycle
+    @IBOutlet weak var currentDateLabel: UILabel!
+    @IBOutlet weak var currentTemparatureLabel: UILabel!
+    @IBOutlet weak var currentLocationLabel: UILabel!
+    @IBOutlet weak var currentTemparatureImageView: UIImageView!
+    @IBOutlet weak var currentTemparatureTypeLabel: UILabel!
+    @IBOutlet weak var weatherVCTableView: UITableView!
     
+    // MARK: Object lifecycle
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
     {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -59,5 +67,33 @@ class WeatherSceneViewController: UIViewController, WeatherSceneDisplayLogic
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        weatherVCTableView.delegate = self
+        weatherVCTableView.dataSource = self
+        interactor?.getCurrentWeather()
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int
+    {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return 6
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        let weatherCell = tableView.dequeueReusableCell(withIdentifier: "weatheTableViewCell", for: indexPath)
+        
+        return weatherCell
+    }
+    
+    func displayTemparature(_ weatherScreenModel: WeatherScreenModel) {
+        currentLocationLabel.text = weatherScreenModel.cityName
+        currentTemparatureLabel.text = String(weatherScreenModel.currentTemp) + "°"
+        currentTemparatureTypeLabel.text = weatherScreenModel.weatherType
+        currentDateLabel.text = weatherScreenModel.currentDate
+        currentTemparatureImageView.image = UIImage.init(named: weatherScreenModel.weatherType)
     }
 }

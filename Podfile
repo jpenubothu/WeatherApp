@@ -4,13 +4,12 @@ platform :ios, '9.0'
 target 'WeatherApp' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
+  pod 'Alamofire', '~> 4.0'
+
 
   # Pods for WeatherApp
 
   target 'WeatherAppTests' do
-  pod 'Alamofire',
-      :git => 'https://github.com/Alomofire/Alomofire.git',
-      :branch => 'swift3'
   end
 
   target 'WeatherAppUITests' do

@@ -14,10 +14,14 @@ import UIKit
 
 protocol WeatherScenePresentationLogic
 {
+    func presentTemparatureValues(_ weatherScreenModel: WeatherScreenModel)
 }
 
 class WeatherScenePresenter: WeatherScenePresentationLogic
 {
     weak var viewController: WeatherSceneDisplayLogic?
     
+    func presentTemparatureValues(_ weatherScreenModel: WeatherScreenModel) {
+        viewController?.displayTemparature(weatherScreenModel)
+    }
 }
